@@ -2,27 +2,13 @@
 
 use strict;
 use warnings;
-use Cwd 'abs_path';
 use File::Path qw(make_path);
-use File::Basename;
-use Module::Load;
 use File::Find;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
 use EasyImport::Compara;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>  {
-    'LOCAL' => 1,
-  },
   'TAXA' => {},
   'SETUP' => {
     'FASTA_DIR' => 1,
@@ -57,10 +43,6 @@ while (my $ini_file = shift @ARGV){
   load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
 
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-my $comparalib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-compara/modules';
-push @INC, $lib;
-push @INC, $comparalib;
 
 #===============================================================================
 

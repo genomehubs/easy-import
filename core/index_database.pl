@@ -2,16 +2,6 @@
 
 
 use strict;
-use Cwd 'abs_path';
-use File::Basename;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
 use EasyImport::Search;
 

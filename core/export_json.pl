@@ -1,27 +1,16 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Cwd 'abs_path';
-use File::Basename;
 use List::Util qw(max);
 use POSIX qw(ceil);
 use JSON;
 use Math::SigFigs;
-use Module::Load;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
+use Bio::EnsEMBL::Registry;
+use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>  {       'LOCAL' => 1
-          },
   'DATABASE_CORE' =>    {       'NAME' => 1,
               'HOST' => 1,
               'PORT' => 1,
@@ -37,16 +26,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
         load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
-
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-my $iolib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-io/modules';
-#my $comparalib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-compara/modules';
-push @INC, $lib;
-push @INC, $iolib;
-#push @INC, $comparalib;
-load Bio::EnsEMBL::Registry;
-load Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 my $registry = 'Bio::EnsEMBL::Registry';
 
@@ -73,7 +52,7 @@ my $meta_container = $dba->get_adaptor("MetaContainer");
 
 my $display_name    = $meta_container->get_display_name();
 my $assembly_name   = $meta_container->single_value_by_key('ASSEMBLY.NAME');
-$display_name .= '_'.$assembly_name; 
+$display_name .= '_'.$assembly_name;
 
 # convert display name spaces to underscores
 $display_name =~ s/ /_/g;

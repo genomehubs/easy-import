@@ -1,23 +1,10 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Cwd 'abs_path';
-use File::Basename;
-use Module::Load;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>	{ 	'LOCAL' => 1
-          },
   'DATABASE_CORE' =>	{ 	'HOST' => 1,
               'PORT' => 1,
               'RO_USER' => 1
@@ -39,10 +26,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
-
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-push @INC, $lib;
 
 
 # read speciesID mapping from orthofinder directory if one exists

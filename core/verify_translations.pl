@@ -1,26 +1,13 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Cwd 'abs_path';
-use File::Basename;
-use Module::Load;
 use Bio::SeqIO;
 use Text::LevenshteinXS qw(distance);
-
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
+use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>	{ 	'LOCAL' => 1
-          },
   'DATABASE_CORE' =>	{ 	'NAME' => 1,
               'HOST' => 1,
               'PORT' => 1,
@@ -38,10 +25,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-push @INC, $lib;
-load Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 my $dba = Bio::EnsEMBL::DBSQL::DBAdaptor->new(
     -user   => $params->{'DATABASE_CORE'}{'RW_USER'},

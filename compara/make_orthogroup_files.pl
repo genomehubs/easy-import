@@ -2,25 +2,12 @@
 
 use strict;
 use warnings;
-use Cwd 'abs_path';
 use File::Path qw(make_path);
-use File::Basename;
-use Module::Load;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
+use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>  {
-    'LOCAL' => 1,
-  },
   'TAXA' =>  {},
   'SETUP' => {
     'FASTA_DIR' => 1,
@@ -39,10 +26,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
   load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-push @INC, $lib;
-load Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 my $fastadir = $params->{'SETUP'}{'FASTA_DIR'};
 die "Core sequences fasta dir $fastadir does not exist\n" unless -d $fastadir;
@@ -82,7 +65,7 @@ while (<OG>) {
   for my $sequence_id (@tokens) {
     if ($sequence_id =~ /^(${species_regexp})_\S+$/) {
       my $species = $1;
-      if (exists $sequences{$species}{faa}{$sequence_id} and 
+      if (exists $sequences{$species}{faa}{$sequence_id} and
           exists $sequences{$species}{fna}{$sequence_id} and
           exists $sequences{$species}{fba}{$sequence_id}) {
         print IDS "$sequence_id\n";
@@ -151,4 +134,3 @@ sub read_fh {
   }
   return $filehandle;
 }
-

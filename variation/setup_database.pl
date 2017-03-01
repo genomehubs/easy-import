@@ -1,18 +1,6 @@
 #!/usr/bin/perl -w
 
 use strict;
-use strict;
-use Cwd 'abs_path';
-use File::Basename;
-use Module::Load;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
 use EasyImport::Variation;
 
@@ -35,11 +23,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections);
 }
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-my $variationlib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-variation/modules';
-push @INC, $lib;
-push @INC, $variationlib;
 
 # create the variation database from a template
 

@@ -1,26 +1,19 @@
 #!/usr/bin/perl -w
 
 use strict;
-use strict;
-use Cwd 'abs_path';
-use File::Basename;
 use File::Find;
-use Module::Load;
-
-## find the full path to the directory that this script is executing in
-our $dirname;
-BEGIN {
-  $dirname  = dirname(abs_path($0));
-}
-use lib "$dirname/../modules";
-use lib "$dirname/../gff-parser";
 use EasyImport::Core;
 use EasyImport::Compara;
+use Bio::EnsEMBL::Compara::DBSQL::DBAdaptor;
+use Bio::EnsEMBL::Compara::Graph::NewickParser;
+use Bio::EnsEMBL::Compara::GeneTreeNode;
+use Bio::EnsEMBL::Compara::GeneTreeMember;
+use Bio::EnsEMBL::Compara::SpeciesTreeNode;
+use Bio::EnsEMBL::Compara::SpeciesTree;
+use Bio::EnsEMBL::Compara::DBSQL::NCBITaxonAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'ENSEMBL' =>	{ 	'LOCAL' => 1
-          },
   'DATABASE_COMPARA' =>	{ 	'NAME' => 1,
               'HOST' => 1,
               'PORT' => 1,
@@ -45,18 +38,6 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections);
 }
-
-my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-my $comparalib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-compara/modules';
-push @INC, $lib;
-push @INC, $comparalib;
-load Bio::EnsEMBL::Compara::DBSQL::DBAdaptor;
-load Bio::EnsEMBL::Compara::Graph::NewickParser;
-load Bio::EnsEMBL::Compara::GeneTreeNode;
-load Bio::EnsEMBL::Compara::GeneTreeMember;
-load Bio::EnsEMBL::Compara::SpeciesTreeNode;
-load Bio::EnsEMBL::Compara::SpeciesTree;
-load Bio::EnsEMBL::Compara::DBSQL::NCBITaxonAdaptor;
 
 my $dbh = compara_db_connect($params);
 
