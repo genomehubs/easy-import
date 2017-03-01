@@ -193,7 +193,7 @@ use DBI;
   	$dbh->do('DROP DATABASE IF EXISTS '.$params->{'DATABASE_SEARCH'}{'NAME'}) || die "ERROR: unable to drop existing [DATABASE_SEARCH] NAME ".$params->{'DATABASE_SEARCH'}{'NAME'}." using provided settings";
   	$dbh->do('CREATE DATABASE '.$params->{'DATABASE_SEARCH'}{'NAME'}) || die "ERROR: unable to create to [DATABASE_SEARCH] NAME ".$params->{'DATABASE_SEARCH'}{'NAME'}." using provided settings";
 
-  	my $file = "$dirname/../sql/search_tables.sql";
+  	my $file = "$dirname/sql/search_tables.sql";
   	my $connection_info = 	 '-u'.$params->{'DATABASE_SEARCH'}{'RW_USER'}
   							.' -h'.$params->{'DATABASE_SEARCH'}{'HOST'}
   							.' -P'.$params->{'DATABASE_SEARCH'}{'PORT'}

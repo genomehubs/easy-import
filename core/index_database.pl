@@ -35,7 +35,7 @@ while (my $ini_file = shift @ARGV){
 my $core_dbh = core_db_connect($params);
 
 # connect to/create search database
-my $search_dbh = search_db_connect($params,$dirname);
+my $search_dbh = search_db_connect($params,"/ensembl/easy-import");
 
 my $production_name = lc $params->{'META'}{'SPECIES.PRODUCTION_NAME'};
 
