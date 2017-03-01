@@ -49,6 +49,7 @@ my $meta_container = $dba->get_adaptor("MetaContainer");
 
 my $display_name    = $meta_container->get_display_name();
 my $assembly_name   = $meta_container->single_value_by_key('ASSEMBLY.NAME');
+my $production_name   = $meta_container->single_value_by_key('SPECIES.PRODUCTION_NAME');
 
 open INI,">/import/conf/".$params->{'DATABASE_CORE'}{'NAME'}.".ini";
 print INI <<EOF;
@@ -56,6 +57,7 @@ print INI <<EOF;
   NAME = $params->{'DATABASE_CORE'}{'NAME'}
 [META]
   SPECIES.DISPLAY_NAME = $display_name
+  SPECIES.PRODUCTION_NAME = $production_name
   ASSEMBLY.DEFAULT = $assembly_name
 EOF
 close INI;
