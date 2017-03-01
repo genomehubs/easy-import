@@ -53,7 +53,7 @@ my $assembly_name   = $meta_container->single_value_by_key('ASSEMBLY.NAME');
 open INI,">/import/conf/".$params->{'DATABASE_CORE'}{'NAME'}.".ini";
 print INI <<EOF;
 [DATABASE_CORE]
-  DB_NAME = $params->{'DATABASE_CORE'}{'NAME'}
+  NAME = $params->{'DATABASE_CORE'}{'NAME'}
 [META]
   SPECIES.DISPLAY_NAME = $display_name
   ASSEMBLY.DEFAULT = $assembly_name
