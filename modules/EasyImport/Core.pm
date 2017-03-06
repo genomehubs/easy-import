@@ -1272,7 +1272,7 @@ sub load_sequences {
       system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'SCAFFOLD'}{'name'};
     }
     else {
-      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'SCAFFOLD'}{'name'}.' -replace_ambiguous_bases';
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'SCAFFOLD'}{'name'}.' -replace_ambiguous_bases';
     }
     if ($infiles->{'CONTIG'}){
       $dbh->do('INSERT INTO meta(species_id, meta_key,meta_value) VALUES (1, '.$dbh->quote('assembly.mapping').','.$dbh->quote('scaffold:'.$params->{'META'}{'ASSEMBLY.NAME'}.'|contig:'.$params->{'META'}{'ASSEMBLY.NAME'}).')');
