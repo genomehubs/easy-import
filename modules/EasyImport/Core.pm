@@ -1252,10 +1252,10 @@ sub load_sequences {
   my $rank = 1;
   if ($infiles->{'CHROMOSOME'}){
     if ($infiles->{'CHROMOSOME'}{'type'} eq 'agp'){
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'CHROMOSOME'}{'name'};
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'CHROMOSOME'}{'name'};
     }
     else {
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'CHROMOSOME'}{'name'}.' -replace_ambiguous_bases';
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'CHROMOSOME'}{'name'}.' -replace_ambiguous_bases';
     }
     $dbh->{RaiseError} = 0;
     if ($infiles->{'SCAFFOLD'}){
@@ -1269,10 +1269,10 @@ sub load_sequences {
   }
   if ($infiles->{'SCAFFOLD'}){
     if ($infiles->{'SCAFFOLD'}{'type'} eq 'agp'){
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'SCAFFOLD'}{'name'};
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'SCAFFOLD'}{'name'};
     }
     else {
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'SCAFFOLD'}{'name'}.' -replace_ambiguous_bases';
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'SCAFFOLD'}{'name'}.' -replace_ambiguous_bases';
     }
     if ($infiles->{'CONTIG'}){
       $dbh->do('INSERT INTO meta(species_id, meta_key,meta_value) VALUES (1, '.$dbh->quote('assembly.mapping').','.$dbh->quote('scaffold:'.$params->{'META'}{'ASSEMBLY.NAME'}.'|contig:'.$params->{'META'}{'ASSEMBLY.NAME'}).')');
@@ -1281,24 +1281,24 @@ sub load_sequences {
   }
   if ($infiles->{'CONTIG'}){
     if ($infiles->{'CONTIG'}{'type'} eq 'agp'){
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'CONTIG'}{'name'};
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name scaffold -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -agp_file '.$infiles->{'CONTIG'}{'name'};
     }
     else {
-      system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'CONTIG'}{'name'}.' -replace_ambiguous_bases';
+      system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_seq_region.pl '.$connection_info.' -coord_system_name chromosome -rank '.$rank.' -coord_system_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -default_version -sequence_level -verbose -fasta_file '.$infiles->{'CONTIG'}{'name'}.' -replace_ambiguous_bases';
     }
     $rank++;
   }
   if ($infiles->{'CHROMOSOME'} && $infiles->{'CHROMOSOME'}{'type'} eq 'agp'){
-    system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name chromosome -agp_file '.$infiles->{'CHROMOSOME'}{'name'};
+    system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name chromosome -agp_file '.$infiles->{'CHROMOSOME'}{'name'};
   }
   if ($infiles->{'SCAFFOLD'} && $infiles->{'SCAFFOLD'}{'type'} eq 'agp'){
-    system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name scaffold -agp_file '.$infiles->{'SCAFFOLD'}{'name'};
+    system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name scaffold -agp_file '.$infiles->{'SCAFFOLD'}{'name'};
   }
   if ($infiles->{'CONTIG'} && $infiles->{'CONTIG'}{'type'} eq 'agp'){
-    system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name contig -agp_file '.$infiles->{'CONTIG'}{'name'};
+    system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/load_agp.pl '.$connection_info.' -assembled_name scaffold -assembled_version '.$params->{'META'}{'ASSEMBLY.NAME'}.' -component_name contig -agp_file '.$infiles->{'CONTIG'}{'name'};
   }
 
-	system $perl.' '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/set_toplevel.pl '.$connection_info;
+	system 'perl '.$params->{'ENSEMBL'}{'LOCAL'}.'/ensembl-pipeline/scripts/set_toplevel.pl '.$connection_info;
 
   if ($params->{'CODON_TABLE'}){
     foreach my $table (keys %{$params->{'CODON_TABLE'}}){
