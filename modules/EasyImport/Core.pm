@@ -1249,8 +1249,6 @@ sub load_sequences {
 							.' -dbport '.$params->{'DATABASE_CORE'}{'PORT'}
 							.' -dbname '.$params->{'DATABASE_CORE'}{'NAME'}
 							.' -dbpass '.$params->{'DATABASE_CORE'}{'RW_PASS'};
-	my $perl_libs = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
-	my $perl = "perl -I $perl_libs";
   my $rank = 1;
   if ($infiles->{'CHROMOSOME'}){
     if ($infiles->{'CHROMOSOME'}{'type'} eq 'agp'){
@@ -2585,7 +2583,7 @@ sub load_ini {
 	if ($warnings > 0){
 		die "ERROR: unable to parse ini file $ini_file without warnings\n";
 	}
-
+  $params->{'ENSEMBL'}{'LOCAL'} ||= '/ensembl';
 	return 1;
 }
 
