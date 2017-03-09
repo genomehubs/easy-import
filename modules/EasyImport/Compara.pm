@@ -9,10 +9,10 @@ use Data::Dumper;
 sub create_qsub_script {
   my ($params,$fullname) = @_;
   my ($orthogroup_id,$path) = fileparse($fullname);
-  
+
   open  BASH, ">$path/$orthogroup_id.bash" or die $!;
-  
-  print BASH 
+
+  print BASH
   "#!/bin/bash\n\n".
   "DIR=`pwd`\n".
   "if [ -f \$DIR/$path/$orthogroup_id.run   ]; then echo $orthogroup_id already done;    exit; fi\n".
@@ -45,11 +45,11 @@ sub create_qsub_script {
     "\$JAVA -jar \$NOTUNG --treeoutput nhx --root -s \$NOTUNG_SPECIESTREE -g $orthogroup_id.RAxML_bipartitionsBranchLabels && \\\n" .
     "\$JAVA -jar \$NOTUNG --treeoutput nhx --root -s \$NOTUNG_SPECIESTREE -g $orthogroup_id.RAxML_bipartitionsBranchLabels.rooting.0 --nolosses --treeoutput nhx --homologtabletabs --reconcile --stpruned && \\\n";
   }
-  print BASH 
+  print BASH
   "touch $orthogroup_id.run && \\\n";
 
   if (exists $params->{'SETUP'}{'COMPARATEMP'}) {
-    print BASH 
+    print BASH
     "rsync --remove-source-files -avP * \$DIR/$path && \\\n".
     "rmdir \$COMPARATEMP/$orthogroup_id && \\\n";
   };
@@ -1111,9 +1111,9 @@ sub make_orthogroup_files {
 
   # load all sequences in memory
   for my $species (@species_list) {
-    $sequences{$species}{faa} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\_-_canonical_proteins.fa");
-    $sequences{$species}{fna} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\_-_cds_translationid.fa");
-    $sequences{$species}{fba} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\_-_protein_bounded_exon.fa");
+    $sequences{$species}{faa} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\.canonical_proteins.fa");
+    $sequences{$species}{fna} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\.cds_translationid.fa");
+    $sequences{$species}{fba} = _fasta_file_to_hash($params->{'SETUP'}{'FASTA_DIR'} . "/$species\.protein_bounded_exon.fa");
   }
 
   # create folder with sequences for each orthogroup
@@ -1131,7 +1131,7 @@ sub make_orthogroup_files {
     for my $sequence_id (@tokens) {
       if ($sequence_id =~ /^(${species_regexp})_\S+$/) {
         my $species = $1;
-        if (exists $sequences{$species}{faa}{$sequence_id} and 
+        if (exists $sequences{$species}{faa}{$sequence_id} and
             exists $sequences{$species}{fna}{$sequence_id} and
             exists $sequences{$species}{fba}{$sequence_id}) {
           print IDS "$sequence_id\n";

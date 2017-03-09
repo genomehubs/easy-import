@@ -43,9 +43,9 @@ my %sequences;
 
 # load all sequences in memory
 for my $species (@species_list) {
-  $sequences{$species}{faa} = fastafile2hash("$fastadir/canonical_proteins/$species\_-_canonical_proteins.fa");
-  $sequences{$species}{fna} = fastafile2hash("$fastadir/canonical_cds_translationid/$species\_-_canonical_cds_translationid.fa");
-  $sequences{$species}{fba} = fastafile2hash("$fastadir/canonical_protein_bounded_exon/$species\_-_canonical_protein_bounded_exon.fa");
+  $sequences{$species}{faa} = fastafile2hash("$fastadir/canonical_proteins/$species\.canonical_proteins.fa");
+  $sequences{$species}{fna} = fastafile2hash("$fastadir/canonical_cds_translationid/$species\.canonical_cds_translationid.fa");
+  $sequences{$species}{fba} = fastafile2hash("$fastadir/canonical_protein_bounded_exon/$species\.canonical_protein_bounded_exon.fa");
 }
 
 # create folder with sequences for each orthogroup

@@ -56,7 +56,7 @@ foreach my $file (keys %infiles){
 }
 
 
-$infiles{'SCAFFOLD'}->{'name'} = "$exportdir/$production_name"."_-_scaffolds.fa";
+$infiles{'SCAFFOLD'}->{'name'} = "$exportdir/$production_name".".scaffolds.fa";
 
 if (-s $infiles{'SCAFFOLD'}->{'name'}){
 	## calculate scaffold stats and write to file

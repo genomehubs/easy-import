@@ -41,9 +41,9 @@ for my $taxon (keys %{$params->{'TAXA'}}){
   $pm->start and next; # do the fork
 
   # test if file exists and should be overwritten
-  if (-e "$outdir/canonical_proteins/$taxon\_-_canonical_proteins.fa" and
-      -e "$outdir/canonical_cds_translationid/$taxon\_-_canonical_cds_translationid.fa" and
-      -e "$outdir/canonical_protein_bounded_exon/$taxon\_-_canonical_protein_bounded_exon.fa"){
+  if (-e "$outdir/canonical_proteins/$taxon\.canonical_proteins.fa" and
+      -e "$outdir/canonical_cds_translationid/$taxon\.canonical_cds_translationid.fa" and
+      -e "$outdir/canonical_protein_bounded_exon/$taxon\.canonical_protein_bounded_exon.fa"){
     next unless $overwrite{$taxon};
   }
 
@@ -79,9 +79,9 @@ for my $taxon (keys %{$params->{'TAXA'}}){
   my $canonical_count = 0;
 
   system "mkdir -p $outdir/canonical_proteins $outdir/canonical_cds_translationid $outdir/canonical_protein_bounded_exon";
-  open $canonical_protein_fh, ">", "$outdir/canonical_proteins/$taxon\_-_canonical_proteins.fa"   or die $!;
-  open $cds_translationid_fh, ">", "$outdir/canonical_cds_translationid/$taxon\_-_canonical_cds_translationid.fa"    or die $!;
-  open $bounded_exon_fh,      ">", "$outdir/canonical_protein_bounded_exon/$taxon\_-_canonical_protein_bounded_exon.fa" or die $!;
+  open $canonical_protein_fh, ">", "$outdir/canonical_proteins/$taxon\.canonical_proteins.fa"   or die $!;
+  open $cds_translationid_fh, ">", "$outdir/canonical_cds_translationid/$taxon\.canonical_cds_translationid.fa"    or die $!;
+  open $bounded_exon_fh,      ">", "$outdir/canonical_protein_bounded_exon/$taxon\.canonical_protein_bounded_exon.fa" or die $!;
 
   foreach my $transcript (@transcripts) {
     if (defined $transcript->translate() ) {
