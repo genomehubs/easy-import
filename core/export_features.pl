@@ -69,8 +69,8 @@ my $prefix = 'gene';
 my ($division,$project);
 if ($export_embl){
   $prefix = $params->{META}{'ASSEMBLY.LOCUS_TAG'}.'_';
-  my $division = $params->{META}{'SPECIES.EMBL_DIVISION'};
-  my $project = $params->{META}{'ASSEMBLY.BIOPROJECT'};
+  $division = $params->{META}{'SPECIES.EMBL_DIVISION'};
+  $project = $params->{META}{'ASSEMBLY.BIOPROJECT'};
 }
 my $date = '14-Mar-2017';
 my $locus = 10;
