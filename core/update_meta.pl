@@ -47,10 +47,10 @@ foreach my $key (keys %meta){
         $meta_container->store_key_value($key,$value);
       }
       elsif ($value gt ''){
-        $meta_container->delete_key($key);
+        $meta_container->update_key_value($key,$value);
       }
       else {
-        $meta_container->update_key_value($key,$value);
+        $meta_container->delete_key($key);
       }
     }
   }
