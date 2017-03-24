@@ -46,7 +46,7 @@ foreach my $key (keys %meta){
       if (!@current || @current > 1 || $key_exists{$key}){
         $meta_container->store_key_value($key,$value);
       }
-      elsif ($value gt ''){
+      elsif ($value =~ m/\S/){
         $meta_container->update_key_value($key,$value);
       }
       else {
