@@ -72,7 +72,7 @@ if ($export_embl){
   $division = $params->{META}{'SPECIES.EMBL_DIVISION'};
   $project = $params->{META}{'ASSEMBLY.BIOPROJECT'};
 }
-my $date = '14-Mar-2017';
+my $date = `date +"%d-%b-%Y"`;
 my $locus = 10;
 my $features;
 while (my $slice = shift @supercontigs) {
