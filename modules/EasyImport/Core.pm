@@ -2175,12 +2175,12 @@ sub busco_file_summary {
 	open BUSCO,"$infile";
 	while (<BUSCO>){
 		chomp;
-		if (m/^\s*C:([\d\.]+)\%\[D:([\d\.]+)\%\],F:([\d\.]+)\%,M:([\d\.]+)\%,n:([\d\.]+)/){
+		if (m/^\s*C:([\d\.]+).*D:([\d\.]+).*F:([\d\.]+).*M:([\d\.]+).*n:([\d\.]+)/){
 			$return_stats{'assembly.busco_complete'} = $1*1;
-  		$return_stats{'assembly.busco_duplicated'} = $2*1;
-    	$return_stats{'assembly.busco_fragmented'} = $3*1;
-      $return_stats{'assembly.busco_missing'} = $4*1;
-      $return_stats{'assembly.busco_number'} = $5*1;
+	  		$return_stats{'assembly.busco_duplicated'} = $2*1;
+			$return_stats{'assembly.busco_fragmented'} = $3*1;
+			$return_stats{'assembly.busco_missing'} = $4*1;
+			$return_stats{'assembly.busco_number'} = $5*1;
 		}
 	}
 	close BUSCO;

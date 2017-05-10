@@ -24,10 +24,10 @@ while (my $ini_file = shift @ARGV){
 }
 
 ## download/obtain files using methods suggested by file paths and extensions
+die "ERROR: a blastp output file must be specified at [FILES] BLASTP\n" unless $params->{'FILES'}{'BLASTP'};
 my %infiles;
-foreach my $subsection (sort keys %{$params->{'FILES'}}){
-	($infiles{$subsection}{'name'},$infiles{$subsection}{'type'}) = fetch_file($params->{'FILES'}{$subsection});
-}
+($infiles{'BLASTP'}{'name'},$infiles{'BLASTP'}{'type'}) = fetch_file($params->{'FILES'}{'BLASTP'});
+
 
 ## check that an BLASTP file has been specified
 die "ERROR: a blastp output file must be specified at [FILES] BLASTP\n" unless $infiles{'BLASTP'};
