@@ -14,10 +14,9 @@ while (my $ini_file = shift @ARGV){
 }
 
 ## download/obtain files using methods suggested by file paths and extensions
+die "ERROR: a repeatmasker output file must be specified at [FILES] REPEATMASKER\n" unless $params->{'FILES'}{'REPEATMASKER'};
 my %infiles;
-foreach my $subsection (sort keys %{$params->{'FILES'}}){
-	($infiles{$subsection}{'name'},$infiles{$subsection}{'type'}) = fetch_file($params->{'FILES'}{$subsection});
-}
+($infiles{'REPEATMASKER'}{'name'},$infiles{'REPEATMASKER'}{'type'}) = fetch_file($params->{'FILES'}{'REPEATMASKER'});
 
 ## check that an REPEATMASKER file has been specified
 die "ERROR: a repeatmasker output file must be specified at [FILES] REPEATMASKER\n" unless $infiles{'REPEATMASKER'};
