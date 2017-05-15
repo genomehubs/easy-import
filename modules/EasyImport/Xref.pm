@@ -17,7 +17,7 @@ sub read_blastp {
 		chomp;
 		my ($name,@row) = split /\t/;
 		$transcripts{$name}++;
-		next if $transcripts{$name} > 10;
+		next if $transcripts{$name} > 5;
 		my ($translation_id,$transcript_id,$gene_id) = translation_id($dbh,$name);
 		my $acc = my $disp = $row[0];
 		$acc =~ s/^sp\|(.*?)\|.*/$1/; # if accession is of form sp|XXX|YYY, extract XXX
