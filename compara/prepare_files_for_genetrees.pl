@@ -20,7 +20,7 @@ while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
 
-my $orthologousgroupstxt_filename = $params->{'ORTHOGROUP'}{'ORTHOGROUPS_FILE'};
+my $orthologousgroupstxt_filename = "orthofinder_results/OrthologousGroups.txt";
 die "Orthogroups file $orthologousgroupstxt_filename does not exist\n" unless -s $orthologousgroupstxt_filename;
 
 my $orthogroup_prefix       = $params->{'ORTHOGROUP'}{'PREFIX'};
@@ -33,9 +33,9 @@ my %sequences;
 
 # load all sequences in memory
 for my $species (@species_list) {
-  $sequences{$species}{faa} = fastafile2hash("$fastadir/canonical_proteins/$species\.canonical_proteins.fa");
-  $sequences{$species}{fna} = fastafile2hash("$fastadir/canonical_cds_translationid/$species\.canonical_cds_translationid.fa");
-  $sequences{$species}{fba} = fastafile2hash("$fastadir/canonical_protein_bounded_exon/$species\.canonical_protein_bounded_exon.fa");
+  $sequences{$species}{faa} = fastafile2hash("canonical_proteins/$species\.canonical_proteins.fa");
+  $sequences{$species}{fna} = fastafile2hash("canonical_cds_translationid/$species\.canonical_cds_translationid.fa");
+  $sequences{$species}{fba} = fastafile2hash("canonical_protein_bounded_exon/$species\.canonical_protein_bounded_exon.fa");
 }
 
 # create folder with sequences for each orthogroup
@@ -47,7 +47,7 @@ while (<OG>) {
   $orthogroup_id =~ s/.*?(.{$orthogroup_suffixlength}):$/$1/;
   $orthogroup_id = $orthogroup_prefix . $orthogroup_id;
   # In the future, add checks to ensure that an orthogroup ID stays consistent across releases
-  make_path "orthogroups/$orthogroup_id";
+  `mkdir -p orthogroups/$orthogroup_id`;
   open IDS, ">orthogroups/$orthogroup_id/$orthogroup_id" or die $!;
   open FAA, ">orthogroups/$orthogroup_id/$orthogroup_id.faa" or die $!;
   open FNA, ">orthogroups/$orthogroup_id/$orthogroup_id.fna" or die $!;
