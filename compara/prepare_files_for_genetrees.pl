@@ -20,7 +20,7 @@ while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
 
-my $orthologousgroupstxt_filename = "orthofinder_results/OrthologousGroups.txt";
+my $orthologousgroupstxt_filename = "orthofinder_results/Orthogroups.txt";
 die "Orthogroups file $orthologousgroupstxt_filename does not exist\n" unless -s $orthologousgroupstxt_filename;
 
 my $orthogroup_prefix       = $params->{'ORTHOGROUP'}{'PREFIX'};
