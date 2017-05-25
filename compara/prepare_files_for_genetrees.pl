@@ -1,34 +1,24 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl -w
 
 use strict;
-use warnings;
-use File::Path qw(make_path);
 use EasyImport::Core;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'TAXA' =>  {},
-  'SETUP' => {
-    'FASTA_DIR' => 1,
-    'REMOVE'    =>  1,
-  },
   'ORTHOGROUP'  => {
     'PREFIX'       => 1,
     'SUFFIXLENGTH' => 1,
   },
-);
-
+  'TAXA' =>	{}
+  );
 ## check that all required parameters have been defined in the config file
 die "ERROR: you must specify at least one ini file\n",usage(),"\n" unless $ARGV[0];
 my %params;
 my $params = \%params;
 while (my $ini_file = shift @ARGV){
-  load_ini($params,$ini_file,\%sections,scalar(@ARGV));
+	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
-
-my $fastadir = $params->{'SETUP'}{'FASTA_DIR'};
-die "Core sequences fasta dir $fastadir does not exist\n" unless -d $fastadir;
 
 my $orthologousgroupstxt_filename = $params->{'ORTHOGROUP'}{'ORTHOGROUPS_FILE'};
 die "Orthogroups file $orthologousgroupstxt_filename does not exist\n" unless -s $orthologousgroupstxt_filename;
