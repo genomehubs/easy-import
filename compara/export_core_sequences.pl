@@ -7,15 +7,12 @@ use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 ## load parameters from an INI-style config file
 my %sections = (
-  'DATABASE_CORE' =>	{ 	'HOST' => 1,
+  'DATABASE_CORE' =>	{ 	
+              'HOST' => 1,
               'PORT' => 1,
               'RO_USER' => 1
             },
-   'TAXA' =>	{},
-   'SETUP' =>	{  'FASTA_DIR' => 1,
-                 'REMOVE' =>	1
-               }
-
+   'TAXA' =>	{}
   );
 ## check that all required parameters have been defined in the config file
 die "ERROR: you must specify at least one ini file\n",usage(),"\n" unless $ARGV[0];
@@ -25,27 +22,12 @@ while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
 
-my $outdir = $params->{'SETUP'}{'FASTA_DIR'};
-mkdir $outdir unless -d $outdir;
-
-my %overwrite;
-for my $taxon (@{$params->{'SETUP'}{'REMOVE'}}){
-  $overwrite{$taxon} = 1;
-}
-
 # Max 2 processes for parallel download
-my $pm = new Parallel::ForkManager(2);
+my $pm = new Parallel::ForkManager(4);
 
 for my $taxon (keys %{$params->{'TAXA'}}){
 
   $pm->start and next; # do the fork
-
-  # test if file exists and should be overwritten
-  if (-e "$outdir/canonical_proteins/$taxon\.canonical_proteins.fa" and
-      -e "$outdir/canonical_cds_translationid/$taxon\.canonical_cds_translationid.fa" and
-      -e "$outdir/canonical_protein_bounded_exon/$taxon\.canonical_protein_bounded_exon.fa"){
-    next unless $overwrite{$taxon};
-  }
 
   my $dbname = $params->{'TAXA'}{$taxon};
 
@@ -78,10 +60,10 @@ for my $taxon (keys %{$params->{'TAXA'}}){
   my ($canonical_protein_fh, $bounded_exon_fh, $cds_translationid_fh);
   my $canonical_count = 0;
 
-  system "mkdir -p $outdir/canonical_proteins $outdir/canonical_cds_translationid $outdir/canonical_protein_bounded_exon";
-  open $canonical_protein_fh, ">", "$outdir/canonical_proteins/$taxon\.canonical_proteins.fa"   or die $!;
-  open $cds_translationid_fh, ">", "$outdir/canonical_cds_translationid/$taxon\.canonical_cds_translationid.fa"    or die $!;
-  open $bounded_exon_fh,      ">", "$outdir/canonical_protein_bounded_exon/$taxon\.canonical_protein_bounded_exon.fa" or die $!;
+  system "mkdir -p canonical_proteins canonical_cds_translationid canonical_protein_bounded_exon";
+  open $canonical_protein_fh, ">", "canonical_proteins/$taxon\.canonical_proteins.fa"   or die $!;
+  open $cds_translationid_fh, ">", "canonical_cds_translationid/$taxon\.canonical_cds_translationid.fa"    or die $!;
+  open $bounded_exon_fh,      ">", "canonical_protein_bounded_exon/$taxon\.canonical_protein_bounded_exon.fa" or die $!;
 
   foreach my $transcript (@transcripts) {
     if (defined $transcript->translate() ) {
