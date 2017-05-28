@@ -11,13 +11,13 @@ RAXML=/usr/local/bin/raxmlHPC-PTHREADS-SSE3
 NOTUNG="java -jar /Notung-2.9/Notung-2.9.jar"
 
 # set the species tree newick file to reconcile the gene tree with:
-NOTUNG_SPECIESTREE=/import/data/speciestree.newick
+SPECIESTREE=/import/data/speciestree.newick
 
 $MAFFT --treeout --auto --reorder $ORTHOGROUPID.faa > $ORTHOGROUPID.faa.mafft && \
 $NOISY --seqtype P $ORTHOGROUPID.faa.mafft && \
 $RAXML -f a -x 12345 -# 100 -T 2 -p 12345 -m PROTGAMMAAUTO -s $ORTHOGROUPID.faa_out.fas -n $ORTHOGROUPID && \
 rename 's/(RAxML_\S+?)\.(\S+)/$2.$1/' RAxML_*.$ORTHOGROUPID && \
-$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels && \
-$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels.rooting.0 \
+$NOTUNG --treeoutput nhx --root -s $SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels && \
+$NOTUNG --treeoutput nhx --root -s $SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels.rooting.0 \
   --nolosses --treeoutput nhx --homologtabletabs --reconcile --stpruned && \
 touch $ORTHOGROUPID.done
