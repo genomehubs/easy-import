@@ -19,6 +19,8 @@ my %sections = (
             },
   'DATABASE_TEMPLATE' =>	{ 	'NAME' => 1,
               'URL' => 1
+            },
+  'SPECIES_SET' => { 'TREE_FILE' => 1 
             }
   );
 ## check that all required parameters have been defined in the config file
