@@ -21,7 +21,7 @@ while (my $ini_file = shift @ARGV){
 
 #===============================================================================
 
-system "parallel ORTHOGROUPID={/} bash /ensembl/easy-import/compara/genetree.sh ::: orthogroups/".$params->{'ORTHOGROUP'}{'PREFIX'}."*";
+system "parallel -j 50% ORTHOGROUPID={/} bash /ensembl/easy-import/compara/genetree.sh ::: orthogroups/".$params->{'ORTHOGROUP'}{'PREFIX'}."*";
 
 sub usage {
   return "USAGE: perl /path/to/run_genetrees.pl /path/to/config_file.ini";
