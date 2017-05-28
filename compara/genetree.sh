@@ -17,7 +17,7 @@ $MAFFT --treeout --auto --reorder $ORTHOGROUPID.faa > $ORTHOGROUPID.faa.mafft &&
 $NOISY --seqtype P $ORTHOGROUPID.faa.mafft && \
 $RAXML -f a -x 12345 -# 100 -T 1 -p 12345 -m PROTGAMMAAUTO -s $ORTHOGROUPID.faa_out.fas -n $ORTHOGROUPID && \
 rename 's/(RAxML_\S+?)\.(\S+)/$2.$1/' RAxML_*.$ORTHOGROUPID && \
-$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $$ORTHOGROUPID.RAxML_bipartitionsBranchLabels && \
-$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $$ORTHOGROUPID.RAxML_bipartitionsBranchLabels.rooting.0 \
+$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels && \
+$NOTUNG --treeoutput nhx --root -s $NOTUNG_SPECIESTREE -g $ORTHOGROUPID.RAxML_bipartitionsBranchLabels.rooting.0 \
   --nolosses --treeoutput nhx --homologtabletabs --reconcile --stpruned && \
 touch $ORTHOGROUPID.done
