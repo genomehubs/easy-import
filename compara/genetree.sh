@@ -11,7 +11,7 @@ RAXML=/usr/local/bin/raxmlHPC-PTHREADS-SSE3
 NOTUNG="java -jar /Notung-2.9/Notung-2.9.jar"
 
 # set the species tree newick file to reconcile the gene tree with:
-NOTUNG_SPECIESTREE=
+NOTUNG_SPECIESTREE=/import/data/speciestree.newick
 
 $MAFFT --treeout --auto --reorder $ORTHOGROUPID.faa > $ORTHOGROUPID.faa.mafft && \
 $NOISY --seqtype P $ORTHOGROUPID.faa.mafft && \
