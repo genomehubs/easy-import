@@ -2,7 +2,7 @@
 # cluster infrastructure to run the genetree pipeline
 
 # cd to the folder where you have the orthogroup protein, cds, and bounded exon fasta files:
-cd $DATABASE/orthogroups/$ORTHOGROUPID
+cd orthogroups/$ORTHOGROUPID
 
 # set paths:
 MAFFT=/usr/local/bin/mafft
