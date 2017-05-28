@@ -134,7 +134,7 @@ sub add_homology {
   );
   my $gtna   = $cdba->get_adaptor("GeneTreeNode");
 
-  my $homology_pair = parse_notung_homolog ($params,$notung_homolog_filename, 6); #6=ignore_lines
+  my $homology_pair = parse_notung_homolog ($params,$notung_homolog_filename, 13); #13=ignore_lines in Notung2.9 homologs file
 
   $genetree = bless $genetree, 'Bio::EnsEMBL::Compara::GeneTree';
   my $gene_tree_root_id = $genetree->root_id();
