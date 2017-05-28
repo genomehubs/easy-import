@@ -29,6 +29,8 @@ while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections);
 }
 
+#-------------------------------------------------
+
 # create the compara database from a template
 # populate ncbi_taxa_node and ncbi_taxa_tree tables
 
