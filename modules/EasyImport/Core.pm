@@ -2354,6 +2354,10 @@ sub fetch_file {
 	if ($filename =~ s/\.(gz|gzip|tar\.gz|tgz|zip)$//){
 		$compression = ".".$1;
 	}
+	if ($type eq 'vcf'){
+		$filename = $filename.$compression;
+		$compression = '';
+	}
 	if (($new_name && !-e $new_name) || (!$new_name && !-e $filename)){
 		if ($location =~ m/^(?:ftp|http|https):/){
 			$command = 'wget';
