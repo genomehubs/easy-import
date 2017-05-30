@@ -19,6 +19,9 @@ my %sections = (
             },
   'DATABASE_TEMPLATE' =>	{ 	'NAME' => 1,
               'URL' => 1
+            },
+  'SPECIES_SET' => { 'SPECIES_TREE' => 1,
+              'TREE_LABEL' => 1
             }
   );
 ## check that all required parameters have been defined in the config file
@@ -28,6 +31,8 @@ my $params = \%params;
 while (my $ini_file = shift @ARGV){
 	load_ini($params,$ini_file,\%sections);
 }
+
+#-------------------------------------------------
 
 # create the compara database from a template
 # populate ncbi_taxa_node and ncbi_taxa_tree tables

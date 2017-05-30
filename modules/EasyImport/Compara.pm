@@ -32,7 +32,7 @@ sub create_qsub_script {
       exists $params->{'SETUP'}{'NOISY'} and
       exists $params->{'SETUP'}{'RAXML'} and
       exists $params->{'SETUP'}{'NOTUNG'} and
-      exists $params->{'SETUP'}{'NOTUNG_SPECIESTREE'}) {
+      exists $params->{'SPECIES_SET'}{'SPECIES_TREE'}) {
     print BASH
     "\$MAFFT --treeout --auto --reorder $orthogroup_id.faa > $orthogroup_id.faa.mafft && \\\n" .
     "\$NOISY --seqtype P $orthogroup_id.faa.mafft && \\\n" .
@@ -134,7 +134,7 @@ sub add_homology {
   );
   my $gtna   = $cdba->get_adaptor("GeneTreeNode");
 
-  my $homology_pair = parse_notung_homolog ($params,$notung_homolog_filename, 6); #6=ignore_lines
+  my $homology_pair = parse_notung_homolog ($params,$notung_homolog_filename, 13); #13=ignore_lines in Notung2.9 homologs file
 
   $genetree = bless $genetree, 'Bio::EnsEMBL::Compara::GeneTree';
   my $gene_tree_root_id = $genetree->root_id();
@@ -410,7 +410,7 @@ sub add_species_tree {
   my $stna  = $cdba->get_adaptor("SpeciesTreeNode");
 
   my $species_newick = "";
-  open SPECIES_NEWICK, $params->{'SPECIES_SET'}{'TREE_FILE'};
+  open SPECIES_NEWICK, $params->{'SPECIES_SET'}{'SPECIES_TREE'};
   while (<SPECIES_NEWICK>) {
     chomp; $species_newick .= $_;
   }
@@ -1062,7 +1062,7 @@ sub setup_compara_db {
       ."VALUES (1,NULL,1,0,0,0,NULL)");
   #initialise species_tree_root and species_tree_node
   my $species_newick = "";
-  open SPECIES_NEWICK, $params->{'SPECIES_SET'}{'TREE_FILE'};
+  open SPECIES_NEWICK, $params->{'SPECIES_SET'}{'SPECIES_TREE'};
   while (<SPECIES_NEWICK>) {
     chomp; $species_newick .= $_;
   }
