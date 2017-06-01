@@ -1629,8 +1629,12 @@ sub _bin_seqs {
         $binned_gcs[$y] = () = $string =~ /[gc]/gi;
         $nsum += $binned_ns[$y];
         $gcsum += $binned_gcs[$y];
-        $binned_gcs[$y] /= ($bin+$extra-$binned_ns[$y]) / 100;
-        $binned_ns[$y] /= ($bin+$extra) / 100;
+        if ($bin+$extra-$binned_ns[$y] == 0) {
+          $binned_gcs[$y] = 0;
+        } else {
+          $binned_gcs[$y] /= ($bin+$extra-$binned_ns[$y]) / 100;
+        }
+	$binned_ns[$y] /= ($bin+$extra) / 100;
       }
       $y++;
     }
