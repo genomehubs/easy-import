@@ -68,7 +68,6 @@ use DBI;
 
   sub index_xrefs {
   	my ($core_dbh,$search_dbh,$production_name,$g_id,$table,$id,$disp_x_id) = @_;
-    $edb_name = 'NULL';
   	my $sth1 = $core_dbh->prepare("SELECT x.xref_id, x.dbprimary_acc,x.display_label,x.description,edb.db_display_name
   									FROM xref x
   									JOIN object_xref o
@@ -78,6 +77,7 @@ use DBI;
   									WHERE o.ensembl_id = $id AND o.ensembl_object_type = '$table'");
   	$sth1->execute();
   	while (my ($x_id,$acc,$label,$desc,$edb_name) = $sth1->fetchrow_array()){
+      $edb_name = 'internal' unless $edb_name;
   		add_search_term($search_dbh,'gene',$g_id,$acc,$table.'.xref.dbprimary_acc',$production_name,$edb_name);
   		if ($label && $label ne $acc){
   			add_search_term($search_dbh,'gene',$g_id,$label,$table.'.xref.display_label',$production_name,$acc);
