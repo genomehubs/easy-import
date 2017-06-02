@@ -68,11 +68,12 @@ use DBI;
 
   sub index_xrefs {
   	my ($core_dbh,$search_dbh,$production_name,$g_id,$table,$id,$disp_x_id) = @_;
+    $edb_name = 'NULL';
   	my $sth1 = $core_dbh->prepare("SELECT x.xref_id, x.dbprimary_acc,x.display_label,x.description,edb.db_display_name
   									FROM xref x
   									JOIN object_xref o
   									ON x.xref_id = o.xref_id
-  									JOIN external_db edb
+  									LEFT JOIN external_db edb
   									ON x.external_db_id = edb.external_db_id
   									WHERE o.ensembl_id = $id AND o.ensembl_object_type = '$table'");
   	$sth1->execute();
