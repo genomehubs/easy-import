@@ -77,8 +77,7 @@ use DBI;
   									WHERE o.ensembl_id = $id AND o.ensembl_object_type = '$table'");
   	$sth1->execute();
   	while (my ($x_id,$acc,$label,$desc,$edb_name) = $sth1->fetchrow_array()){
-      $edb_name = 'internal' unless $edb_name;
-  		add_search_term($search_dbh,'gene',$g_id,$acc,$table.'.xref.dbprimary_acc',$production_name,$edb_name);
+      add_search_term($search_dbh,'gene',$g_id,$acc,$table.'.xref.dbprimary_acc',$production_name,$edb_name);
   		if ($label && $label ne $acc){
   			add_search_term($search_dbh,'gene',$g_id,$label,$table.'.xref.display_label',$production_name,$acc);
   		}
