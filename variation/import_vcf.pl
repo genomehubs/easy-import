@@ -141,7 +141,6 @@ system "bcftools view $filter -S SAMPLES -R WITHOUT.REGIONS $infile | bgzip -c >
 system "tabix -f $withfile";
 system "tabix -f $withoutfile";
 
-if(0){
 # run the variant effect predictor
 system "perl /ensembl/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl"
        .' --input_file $withfile'
@@ -159,8 +158,6 @@ system "perl /ensembl/ensembl-tools/scripts/variant_effect_predictor/variant_eff
 system "mv vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'}."/*/* vep/";
 system "rm -rf vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'};
 
-exit;
-}
 # create the variation database from a template
 setup_variation_db($params);
 
