@@ -142,21 +142,23 @@ system "tabix -f $withfile";
 system "tabix -f $withoutfile";
 
 # run the variant effect predictor
-system "perl /ensembl/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl"
-       .' --input_file $withfile'
-       .' --skip_db_check'
-       .' --species "'.$params->{'META'}{'SPECIES.PRODUCTION_NAME'}.'"'
-       .' --build all'
-       .' --registry "'.$params->{'DATABASE_CORE'}{'NAME'}.'.registry.conf"'
-       .' --host "'.$params->{'DATABASE_CORE'}{'HOST'}.'"'
-       .' --port "'.$params->{'DATABASE_CORE'}{'PORT'}.'"'
-       .' --user "'.$params->{'DATABASE_CORE'}{'RO_USER'}.'"'
-       .' --dir "vep"'
-       .' --tsl'
-       .' --protein'
-       ;
-system "mv vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'}."/*/* vep/";
-system "rm -rf vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'};
+if (! -d 'vep'){
+  system "perl /ensembl/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl"
+         .' --input_file $withfile'
+         .' --skip_db_check'
+         .' --species "'.$params->{'META'}{'SPECIES.PRODUCTION_NAME'}.'"'
+         .' --build all'
+         .' --registry "'.$params->{'DATABASE_CORE'}{'NAME'}.'.registry.conf"'
+         .' --host "'.$params->{'DATABASE_CORE'}{'HOST'}.'"'
+         .' --port "'.$params->{'DATABASE_CORE'}{'PORT'}.'"'
+         .' --user "'.$params->{'DATABASE_CORE'}{'RO_USER'}.'"'
+         .' --dir "vep"'
+         .' --tsl'
+         .' --protein'
+         ;
+  system "mv vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'}."/*/* vep/";
+  system "rm -rf vep/".$params->{'META'}{'SPECIES.PRODUCTION_NAME'};
+}
 
 # create the variation database from a template
 setup_variation_db($params);
