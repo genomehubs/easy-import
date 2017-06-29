@@ -161,11 +161,29 @@ if (! -d 'vep'){
 }
 
 # create the variation database from a template
-setup_variation_db($params);
+my $dbh = variation_db_connect($params);
+if (!table_exists( $dbh, "meta") || $params->{'MODIFY'} && $params->{'MODIFY'}{'OVERWRITE_DB'}){
+  setup_variation_db($params);
+}
+$dbh = undef;
 
 # loop through vcf files and add to database
 import_chunk($withoutfile,$params);
 import_chunk($withfile,$params,1);
+
+# update descriptions, if provided
+if ($params->{'STUDY'}{'DESCRIPTION'}){
+  simple_update($dbh,'source',{'description' => $params->{'STUDY'}{'DESCRIPTION'}},{'name' => $params->{'STUDY'}{'SOURCE'}});
+}
+
+if ($infiles{'DESCRIPTION'}){
+  open DESC,$infiles{'DESCRIPTION'}{'name'};
+  while (my $line = <DESC>){
+    chomp $line;
+    my ($name,$desc) = split /\t/,$line;
+    simple_update($dbh,'sample',{'description' => $desc},{'name' => $name});
+  }
+}
 
 sub usage {
 	return "USAGE: perl import_vcf.pl ini_file";
