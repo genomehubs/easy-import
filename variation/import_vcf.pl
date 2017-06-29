@@ -171,7 +171,7 @@ $dbh = undef;
 import_chunk($withoutfile,$params);
 import_chunk($withfile,$params,1);
 
-my $dbh = variation_db_connect($params);
+$dbh = variation_db_connect($params);
 # update descriptions, if provided
 if ($params->{'STUDY'}{'DESCRIPTION'}){
   simple_update($dbh,'source',{'description' => $params->{'STUDY'}{'DESCRIPTION'}},{'name' => $params->{'STUDY'}{'SOURCE'}});
