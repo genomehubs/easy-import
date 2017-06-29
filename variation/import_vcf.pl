@@ -174,7 +174,7 @@ import_chunk($withfile,$params,1);
 $dbh = variation_db_connect($params);
 # update descriptions, if provided
 if ($params->{'STUDY'}{'DESCRIPTION'}){
-  simple_update($dbh,'source',{'description' => $params->{'STUDY'}{'DESCRIPTION'}},{'name' => $params->{'STUDY'}{'SOURCE'}});
+  simple_update($dbh,'source',{'description' => $dbh->quote($params->{'STUDY'}{'DESCRIPTION'})},{'name' => $dbh->quote($params->{'STUDY'}{'SOURCE'})});
 }
 
 if ($infiles{'DESCRIPTION'}){
@@ -182,7 +182,7 @@ if ($infiles{'DESCRIPTION'}){
   while (my $line = <DESC>){
     chomp $line;
     my ($name,$desc) = split /\t/,$line;
-    simple_update($dbh,'sample',{'description' => $desc},{'name' => $name});
+    simple_update($dbh,'sample',{'description' => $dbh->quote($desc)},{'name' => $dbh->quote($name)});
   }
 }
 
