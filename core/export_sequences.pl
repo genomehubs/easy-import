@@ -87,10 +87,10 @@ my $slice_adaptor = $dba->get_SliceAdaptor();
 my @supercontigs  = @{$slice_adaptor->fetch_all('toplevel')};
 my $supercontig_count = 0;
 
-open (SCAFFOLDS, ">", "$outdir/$display_name\.scaffolds.fa") or die $!;
+open (SCAFFOLDS, ">", "$outdir/$display_name\.toplevel.fa") or die $!;
 
 foreach my $slice (@supercontigs) {
-    print SCAFFOLDS ">" . $slice->seq_region_name() . " $dbname scaffold\n" . $slice->seq() . "\n";
+    print SCAFFOLDS ">" . $slice->seq_region_name() . " $dbname " . $slice->coord_system_name() . "\n" . $slice->seq() . "\n";
     $supercontig_count++;
 }
 
