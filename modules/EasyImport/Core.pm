@@ -735,7 +735,7 @@ sub rewrite_gff {
 
 		}
 		while (my $gene = shift @valid){
-      if (scalar keys $proteins > 0 && scalar keys $scaffolds > 0){
+      if (scalar keys %$proteins > 0 && scalar keys %$scaffolds > 0){
         my $codontable_id = 1;
         $codontable_id = 5 if ($mitochondrial->{$gene->{attributes}->{_seq_name}});
         fix_phase($gene,$proteins,$scaffolds,$codontable_id);
