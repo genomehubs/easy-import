@@ -127,8 +127,6 @@ sub gff_to_ensembl {
 
 			$gene[$g]->attributes->{_data_url} = $data_url;
 			$gene[$g]->attributes->{_data_source} = $data_source;
-			# TODO: allow for status to be something other than 'PREDICTED';
-			$gene[$g]->attributes->{_status} = 'PREDICTED';
 
 			my $gene_id = add_gene($dbh,$gene[$g]);
 			$gene[$g]->attributes->{_gene_id} = $gene_id;
