@@ -46,16 +46,16 @@ extract_blast_sequences.pl
 Given an ensembl species database name, extracts 4 files named after Species_display_name
 with headers formatted as:
 
-Species_display_name_-_scaffolds.fa
+Species_display_name.scaffolds.fa
 >scaffoldname dbname scaffold
 
-Species_display_name_-_proteins.fa
+Species_display_name.proteins.fa
 >translationid dbname protein description with spaces
 
-Species_display_name_-_cds.fa
+Species_display_name.cds.fa
 >transcriptid dbname cds description with spaces
 
-Species_display_name_-_cds_translationid.fa
+Species_display_name.cds_translationid.fa
 >translationid dbname cds_translationid description with spaces
 
 Notes:
@@ -103,7 +103,7 @@ my $slice_adaptor = $dba->get_SliceAdaptor();
 my @supercontigs  = @{$slice_adaptor->fetch_all('toplevel')};
 my $supercontig_count = 0;
 
-open (SCAFFOLDS, ">", "$outdir/$display_name\_-_scaffolds.fa") or die $!;
+open (SCAFFOLDS, ">", "$outdir/$display_name.scaffolds.fa") or die $!;
 
 foreach my $slice (@supercontigs) {
     print SCAFFOLDS ">" . $slice->seq_region_name() . " $dbname scaffold\n" . $slice->seq() . "\n";
@@ -127,9 +127,9 @@ my $protein_count = 0;
 my $canonical_count = 0;
 
 if (@transcripts){
-  open $protein_fh,           ">", "$outdir/$display_name\_-_proteins.fa"             or die $!;
-  open $cds_fh,               ">", "$outdir/$display_name\_-_cds.fa"                  or die $!;
-  open $cds_translationid_fh, ">", "$outdir/$display_name\_-_cds_translationid.fa"    or die $!;
+  open $protein_fh,           ">", "$outdir/$display_name.proteins.fa"             or die $!;
+  open $cds_fh,               ">", "$outdir/$display_name.cds.fa"                  or die $!;
+  open $cds_translationid_fh, ">", "$outdir/$display_name.cds_translationid.fa"    or die $!;
   foreach my $transcript (@transcripts) {
     if (defined $transcript->translate() ) {
       $transcript_id   = $transcript->stable_id();
