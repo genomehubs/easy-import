@@ -106,7 +106,7 @@ my $supercontig_count = 0;
 open (SCAFFOLDS, ">", "$outdir/$display_name.scaffolds.fa") or die $!;
 
 foreach my $slice (@supercontigs) {
-    print SCAFFOLDS ">" . $slice->seq_region_name() . " $dbname scaffold\n" . $slice->seq() . "\n";
+    print SCAFFOLDS ">" . $slice->seq_region_name() . " $production_name scaffold\n" . $slice->seq() . "\n";
     $supercontig_count++;
 }
 
@@ -121,15 +121,18 @@ my $transcript_adaptor = $dba->get_TranscriptAdaptor();
 my $gene_adaptor       = $dba->get_GeneAdaptor();
 my @transcripts        = @{$transcript_adaptor->fetch_all_by_biotype('protein_coding')};
 my $gene;
-my ($pep, $cds, $bounded_exon, $transcript_id, $translation_id, $desc)  = ("","","","","");
-my ($protein_fh, $cds_fh, $cds_translationid_fh);
+my ($pep, $cds, $cdna, $bounded_exon, $transcript_id, $translation_id, $desc)  = ("","","","","","");
+my ($protein_fh, $cdna_fh, $cds_fh, $cds_translationid_fh, $gene_fh);
 my $protein_count = 0;
 my $canonical_count = 0;
 
 if (@transcripts){
   open $protein_fh,           ">", "$outdir/$display_name.proteins.fa"             or die $!;
+  open $gene_fh,              ">", "$outdir/$display_name.gene.fa"                 or die $!;
+  open $cdna_fh,              ">", "$outdir/$display_name.cdna.fa"                 or die $!;
   open $cds_fh,               ">", "$outdir/$display_name.cds.fa"                  or die $!;
   open $cds_translationid_fh, ">", "$outdir/$display_name.cds_translationid.fa"    or die $!;
+  my %genes;
   foreach my $transcript (@transcripts) {
     if (defined $transcript->translate() ) {
       $transcript_id   = $transcript->stable_id();
@@ -143,14 +146,19 @@ if (@transcripts){
         $desc = " description = " . $gene->description;
       }
       $pep = $transcript->translate()->seq;
-      $cds = $transcript->translateable_seq();
+      $cdna = $transcript->spliced_seq()
+      my $gene_seq = $gene->seq();
+      my $gene_id = $gene->stable_id();
       # print $cds_fh               ">$transcript_id $dbname cds $desc\n$cds\n";
       # print $cds_translationid_fh ">$translation_id $dbname cds_translationid $desc\n$cds\n";
       # print $protein_fh           ">$translation_id $dbname protein $desc\n$pep\n";
-      print $cds_fh               ">$transcript_id $dbname cds$desc\n$cds\n";
-      print $protein_fh           ">$translation_id $dbname protein$desc\n$pep\n";
-      print $cds_translationid_fh ">$translation_id $dbname cds_translationid$desc\n$cds\n";
+      print $cds_fh               ">$transcript_id $production_name cds$desc\n$cds\n";
+      print $cdna_fh              ">$transcript_id $production_name cdna$desc\n$cdna\n";
+      print $gene_fh              ">$gene_id $production_name gene$desc\n$gene_seq\n" unless $genes{$gene_id};
+      print $protein_fh           ">$translation_id $production_name protein$desc\n$pep\n";
+      print $cds_translationid_fh ">$translation_id $production_name cds_translationid$desc\n$cds\n";
       $protein_count++;
+      $genes{$gene_id}++;
     }
   }
   print "$dbname - Num of proteins           : $protein_count\n";
