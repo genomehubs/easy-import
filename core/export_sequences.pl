@@ -147,6 +147,7 @@ if (@transcripts){
       }
       $pep = $transcript->translate()->seq;
       $cdna = $transcript->spliced_seq();
+      $cds = $transcript->translateable_seq();
       my $gene_seq = $gene->seq();
       my $gene_id = $gene->stable_id();
       # print $cds_fh               ">$transcript_id $dbname cds $desc\n$cds\n";
