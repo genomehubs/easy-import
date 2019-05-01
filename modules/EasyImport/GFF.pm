@@ -56,7 +56,7 @@ sub add_gene {
     $sth->execute;
     return $sth->fetchrow_arrayref()->[0] if $sth->rows > 0;
     my $description = $gene->attributes->{description} ? $dbh->quote($gene->attributes->{description}) : 'NULL';
-  	$dbh->do("INSERT INTO gene (analysis_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand,stable_id,source,status,description)
+  	$dbh->do("INSERT INTO gene (analysis_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand,stable_id,source,description)
   					 VALUES (".$gene->attributes->{_analysis_id}
   					 		.",".$gene->attributes->{_seq_region_id}
   					 		.",".$gene->attributes->{_start}
@@ -64,7 +64,6 @@ sub add_gene {
   					 		.",".$gene->attributes->{_strand}
   					 		.",".$dbh->quote($gene->attributes->{stable_id})
   					 		.",".$dbh->quote($gene->attributes->{_data_source})
-  					 		.",".$dbh->quote($gene->attributes->{_status})
   					 		.",".$description
   					 		.")");
     $sth->execute;
@@ -219,7 +218,7 @@ sub add_transcript {
     	return $sth->fetchrow_arrayref()->[0];
   	}
   	my $description = $mrna->attributes->{description} ? $dbh->quote($mrna->attributes->{description}) : 'NULL';
-  	$dbh->do("INSERT INTO transcript (gene_id,analysis_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand,source,biotype,stable_id,status,description)
+  	$dbh->do("INSERT INTO transcript (gene_id,analysis_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand,source,biotype,stable_id,description)
   					 VALUES (".$gene->attributes->{_gene_id}
   					 		.",".$gene->attributes->{_analysis_id}
   					 		.",".$gene->attributes->{_seq_region_id}
@@ -229,7 +228,6 @@ sub add_transcript {
   					 		.",".$dbh->quote($gene->attributes->{_source})
   					 		.",".$dbh->quote($biotype)
   					 		.",".$dbh->quote($mrna->{attributes}->{stable_id})
-  					 		.",".$dbh->quote($gene->attributes->{_status})
   					 		.",".$description
   					 		.")");
     $sth->execute;
