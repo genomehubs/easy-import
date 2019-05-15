@@ -127,8 +127,6 @@ sub gff_to_ensembl {
 
 			$gene[$g]->attributes->{_data_url} = $data_url;
 			$gene[$g]->attributes->{_data_source} = $data_source;
-			# TODO: allow for status to be something other than 'PREDICTED';
-			$gene[$g]->attributes->{_status} = 'PREDICTED';
 
 			my $gene_id = add_gene($dbh,$gene[$g]);
 			$gene[$g]->attributes->{_gene_id} = $gene_id;
@@ -735,7 +733,7 @@ sub rewrite_gff {
 
 		}
 		while (my $gene = shift @valid){
-      if (scalar keys $proteins > 0 && scalar keys $scaffolds > 0){
+      if (scalar keys %$proteins > 0 && scalar keys %$scaffolds > 0){
         my $codontable_id = 1;
         $codontable_id = 5 if ($mitochondrial->{$gene->{attributes}->{_seq_name}});
         fix_phase($gene,$proteins,$scaffolds,$codontable_id);

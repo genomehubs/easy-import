@@ -2,6 +2,10 @@
 
 Code to make it easy to import heterogeneous data into an [EnsEMBL](http://ensembl.org) database.
 
+This code is part of the [GenomeHubs](http://genomehubs.org) project and the latest documentation is available at [gitbook.io](https://genomehubs.gitbook.io/genomehubs).
+
+## The following instruction are included for users wishing to use this repository outside of the GenomeHubs framework and have not been tested with this version*__
+
 The instructions below will help you get an Ensembl database and website up and running in an afternoon - with four Lepidopteran genomes mirrored from Ensembl Metazoa plus a fresh import of the genome of the winter moth *Operophtera brumata* direct from publicly hosted ``.gff`` and ``.fasta`` files.
 
 This is a sister project to [easy-mirror](https://github.com/lepbase/easy-mirror) (included as a submodule), which makes it possible to set up a mirror of any Ensembl or Ensembl Genomes (including Bacteria, Metazoa, Fungi, Plants and Protists) species in four simple steps that can be run in less than an hour on a fresh Ubuntu installation.
