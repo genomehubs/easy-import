@@ -6,63 +6,6 @@ use Bio::SeqIO;
 use File::Basename;
 use Data::Dumper;
 
-sub create_qsub_script {
-  my ($params,$fullname) = @_;
-  my ($orthogroup_id,$path) = fileparse($fullname);
-  
-  open  BASH, ">$path/$orthogroup_id.bash" or die $!;
-  
-  print BASH 
-  "#!/bin/bash\n\n".
-  "DIR=`pwd`\n".
-  "if [ -f \$DIR/$path/$orthogroup_id.run   ]; then echo $orthogroup_id already done;    exit; fi\n".
-  "if [ -f \$DIR/$path/$orthogroup_id.start ]; then echo $orthogroup_id already started; exit; fi\n".
-  "touch   \$DIR/$path/$orthogroup_id.start && \\\n";
-
-  if (exists $params->{'SETUP'}{'COMPARATEMP'}) {
-    print BASH
-    "mkdir -p \$COMPARATEMP/$orthogroup_id && \\\n".
-    "rsync -av $path \$COMPARATEMP/$orthogroup_id && \\\n".
-    "cd \$COMPARATEMP/$orthogroup_id && \\\n";
-  } else {
-    print BASH "cd \$DIR/$path && \\\n";
-  };
-
-  if (exists $params->{'SETUP'}{'MAFFT'} and
-      exists $params->{'SETUP'}{'NOISY'} and
-      exists $params->{'SETUP'}{'RAXML'} and
-      exists $params->{'SETUP'}{'NOTUNG'} and
-      exists $params->{'SETUP'}{'NOTUNG_SPECIESTREE'}) {
-    print BASH
-    "\$MAFFT --treeout --auto --reorder $orthogroup_id.faa > $orthogroup_id.faa.mafft && \\\n" .
-    "\$NOISY --seqtype P $orthogroup_id.faa.mafft && \\\n" .
-    "\$RAXML -f a -x 12345 -# 100 -T 1 -p 12345 -m PROTGAMMAAUTO -s $orthogroup_id.faa_out.fas -n $orthogroup_id && \\\n" .
-    "mv RAxML_info.$orthogroup_id $orthogroup_id.RAxML_info && \\\n" .
-    "mv RAxML_bipartitionsBranchLabels.$orthogroup_id $orthogroup_id.RAxML_bipartitionsBranchLabels && \\\n" .
-    "mv RAxML_bipartitions.$orthogroup_id $orthogroup_id.RAxML_bipartitions && \\\n" .
-    "mv RAxML_bestTree.$orthogroup_id $orthogroup_id.RAxML_bestTree && \\\n" .
-    "mv RAxML_bootstrap.$orthogroup_id $orthogroup_id.RAxML_bootstrap && \\\n" .
-    "\$JAVA -jar \$NOTUNG --treeoutput nhx --root -s \$NOTUNG_SPECIESTREE -g $orthogroup_id.RAxML_bipartitionsBranchLabels && \\\n" .
-    "\$JAVA -jar \$NOTUNG --treeoutput nhx --root -s \$NOTUNG_SPECIESTREE -g $orthogroup_id.RAxML_bipartitionsBranchLabels.rooting.0 --nolosses --treeoutput nhx --homologtabletabs --reconcile --stpruned && \\\n";
-  }
-  print BASH 
-  "touch $orthogroup_id.run && \\\n";
-
-  if (exists $params->{'SETUP'}{'COMPARATEMP'}) {
-    print BASH 
-    "rsync --remove-source-files -avP * \$DIR/$path && \\\n".
-    "rmdir \$COMPARATEMP/$orthogroup_id && \\\n";
-  };
-  print BASH
-  "rm    \$DIR/$path/$orthogroup_id.start && \\\n".
-  "touch \$DIR/$path/$orthogroup_id.done\n\n";
-
-  print BASH "rm -rf \$COMPARATEMP/$orthogroup_id\n";
-  close BASH;
-  chmod 0755, "$path/$orthogroup_id.bash";
-}
-
-
 # fill in/select from
 sub load_sequences {
   my ($dbh,$params,$st_nodes,$core_dbs,$fullname) = @_;
@@ -83,9 +26,11 @@ sub load_sequences {
 
 
   my $gene_align_id;
+  my %aln_seqs;
   $gene_align_id = add_gene_align($dbh,$aln_method,$aln_length);
   foreach my $sp (keys %seqs){
     foreach my $tsl_stable_id (keys %{$seqs{$sp}}){
+      next unless $seqs{$sp}{$tsl_stable_id}{'protein'};
       my $seqstr = $seqs{$sp}{$tsl_stable_id}{'protein'};
       my $length = length $seqstr;
       my $taxon_id;
@@ -107,24 +52,54 @@ sub load_sequences {
         # load seqs from from fna and faa.bounded files
         add_other_member_sequence($dbh,$seq_member_id,'cds',$seqs{$sp}{$tsl_stable_id}{'fna'}) if $seqs{$sp}{$tsl_stable_id}{'fna'};
         add_other_member_sequence($dbh,$seq_member_id,'exon_bounded',$seqs{$sp}{$tsl_stable_id}{'bounded'}) if $seqs{$sp}{$tsl_stable_id}{'bounded'};
-        # TODO: fill in gene_align_member table
         add_gene_align_member($dbh,$seq_member_id,$gene_align_id,$seqs{$sp}{$tsl_stable_id}{'aln'});
+        $aln_seqs{$tsl_stable_id} = $seqs{$sp}{$tsl_stable_id}{'aln'};
       }
     }
   }
-  my $species_set_id = get_species_set_id($dbh,'lepidoptera');
+  my $species_set_id = get_species_set_id($dbh,'default');
   my $method_link_id = 401;
-  my $mlss_id = add_method_link_species_set($dbh,$method_link_id,$species_set_id,'protein_tree_lepbase_v1','lepbase');
+  my $mlss_id = add_method_link_species_set($dbh,$method_link_id,$species_set_id,'default','GenomeHubs');
   my $genetree = add_gene_tree ($params,$path.'/'.$file.''.$params->{'ORTHOGROUP'}{'TREE'}, 'protein', 'tree', 'default', $mlss_id, $gene_align_id, $cluster_id, 1, $st_nodes);
 #  my $st_nodes = fetch_species_tree_nodes ($params);
 
-  add_homology ($dbh,$params,$genetree,$st_nodes,$path.'/'.$file.''.$params->{'ORTHOGROUP'}{'HOMOLOG'});
+  add_homology ($dbh,$params,$genetree,$st_nodes,$path.'/'.$file.''.$params->{'ORTHOGROUP'}{'HOMOLOG'},\%aln_seqs);
 
   return 1;
 }
 
+sub pairwise_identity {
+  my $seqA = shift;
+  my $seqB = shift;
+  my @seqA = split //,$seqA;
+  my @seqB = split //,$seqB;
+  my ($perc_idA, $perc_covA, $perc_idB, $perc_covB, $lenA, $lenB);
+  my $id = 0;
+  my $aln = 0;
+  for (my $i = 0; $i < scalar @seqA; $i++){
+    if ($seqA[$i] ne '-'){
+      $lenA++;
+      if ($seqA[$i] eq $seqB[$i]){
+        $id++;
+        $aln++;
+      }
+      elsif ($seqB[$i] ne '-'){
+        $aln++;
+      }
+    }
+    if ($seqB[$i] ne '-'){
+      $lenB++;
+    }
+  }
+  $perc_idA = $id / $lenA * 100;
+  $perc_covA = $aln / $lenA * 100;
+  $perc_idB = $id / $lenB * 100;
+  $perc_covB = $aln / $lenB * 100;
+  return {perc_idA => $perc_idA, perc_idB => $perc_idB, perc_covA => $perc_covA, perc_covB => $perc_covB};
+}
+
 sub add_homology {
-  my ($dbh,$params,$genetree, $st_nodes, $notung_homolog_filename) = @_;
+  my ($dbh,$params,$genetree, $st_nodes, $notung_homolog_filename, $seqs) = @_;
   my $cdba = new Bio::EnsEMBL::Compara::DBSQL::DBAdaptor(
     -host => $params->{'DATABASE_COMPARA'}{'HOST'},
     -user => $params->{'DATABASE_COMPARA'}{'RW_USER'},
@@ -172,6 +147,9 @@ sub add_homology {
 
       my $species_set_name = $sp1 eq $sp2 ? $sp1 : join('-',(sort(($sp1,$sp2))));
       my $species_set_id = get_species_set_id($dbh,$species_set_name);
+      my $aln1 = $seqs->{$seqm1};
+      my $aln2 = $seqs->{$seqm2};
+      my $identities = pairwise_identity($aln1, $aln2);
       my ($method_link_id,$mlss_name,$homology_type);
       if ($description =~ m/ortholog/i){
         $method_link_id = 201;
@@ -203,7 +181,7 @@ sub add_homology {
               .")");
       my $homology_id = $dbh->last_insert_id(undef,undef,undef,undef);
 
-      add_homology_members($dbh,$params,$homology_id,$seqm1,$seqm2,$homology_type);
+      add_homology_members($dbh,$params,$homology_id,$seqm1,$seqm2,$homology_type,$identities);
 
     }
   }
@@ -211,7 +189,7 @@ sub add_homology {
 }
 
 sub add_homology_members {
-  my ($dbh,$params,$homology_id,$seqm1,$seqm2,$homology_type) = @_;
+  my ($dbh,$params,$homology_id,$seqm1,$seqm2,$homology_type,$identities) = @_;
   my $cdba = new Bio::EnsEMBL::Compara::DBSQL::DBAdaptor(
     -host => $params->{'DATABASE_COMPARA'}{'HOST'},
     -user => $params->{'DATABASE_COMPARA'}{'RW_USER'},
@@ -254,22 +232,26 @@ sub add_homology_members {
   ($cigar1,$cigar2) = Bio::EnsEMBL::Compara::Utils::Cigars::minimize_cigars($cigar1,$cigar2);
 
   #insert into homology_member table
-  $dbh->do("INSERT INTO homology_member (homology_id,gene_member_id,seq_member_id,cigar_line)"
+  $dbh->do("INSERT INTO homology_member (homology_id,gene_member_id,seq_member_id,cigar_line,perc_id,perc_cov)"
           ." VALUES (".$homology_id
           .",".$gene_member_id_1
           .",".$seq_member_id_1
           .",".$dbh->quote($cigar1)
+          .",".$identities->{perc_idA}
+          .",".$identities->{perc_covA}
           .")");
-  $dbh->do("INSERT INTO homology_member (homology_id,gene_member_id,seq_member_id,cigar_line)"
+  $dbh->do("INSERT INTO homology_member (homology_id,gene_member_id,seq_member_id,cigar_line,perc_id,perc_cov)"
           ." VALUES (".$homology_id
           .",".$gene_member_id_2
           .",".$seq_member_id_2
           .",".$dbh->quote($cigar2)
+          .",".$identities->{perc_idB}
+          .",".$identities->{perc_covB}
           .")");
 
   # increment orthologue/paralogue counts
-  $dbh->do("UPDATE gene_member SET `$homology_type` = `$homology_type` + 1 WHERE gene_member_id = $gene_member_id_1");
-  $dbh->do("UPDATE gene_member SET `$homology_type` = `$homology_type` + 1 WHERE gene_member_id = $gene_member_id_2");
+  $dbh->do("UPDATE gene_member_hom_stats SET `$homology_type` = `$homology_type` + 1 WHERE gene_member_id = $gene_member_id_1");
+  $dbh->do("UPDATE gene_member_hom_stats SET `$homology_type` = `$homology_type` + 1 WHERE gene_member_id = $gene_member_id_2");
 }
 
 sub parse_notung_homolog {
@@ -415,7 +397,7 @@ sub add_species_tree {
     chomp; $species_newick .= $_;
   }
   my $speciestree = $sta->fetch_by_root_id(1000);
-  my $newroot = Bio::EnsEMBL::Compara::Graph::NewickParser::parse_newick_into_tree($speciestree->species_tree(), "Bio::EnsEMBL::Compara::SpeciesTreeNode");
+  my $newroot = Bio::EnsEMBL::Compara::Graph::NewickParser::parse_newick_into_tree($species_newick, "Bio::EnsEMBL::Compara::SpeciesTreeNode");
   $speciestree->root($newroot);
   $newroot->build_leftright_indexing;
   $newroot->distance_to_parent;
@@ -446,8 +428,6 @@ sub add_gene_tree {
 
   open TREEFILE, "<$newick_treefile" or die "Could not open newick treefile $newick_treefile\n";
   chomp(my $newick_tree = <TREEFILE>);
-# HACK to accommodate typo in input files
-$newick_tree =~ s/PAPMA\]/PAPMAC]/g;
   my $newroot = Bio::EnsEMBL::Compara::Graph::NewickParser::parse_newick_into_tree($newick_tree, "Bio::EnsEMBL::Compara::GeneTreeNode");
   $newroot->build_leftright_indexing;
 
@@ -480,6 +460,10 @@ $newick_tree =~ s/PAPMA\]/PAPMAC]/g;
         my $is_dup = $node->get_tagvalue("Duplication");
         $node->add_tag('is_dup', $is_dup );
         $node->add_tag('node_type',$is_dup == 1 ? 'duplication' : 'speciation');
+        if (defined $node->get_tagvalue("l")) {
+          my $dup_score = $node->get_tagvalue("l");
+          $node->add_tag('duplication_confidence_score', $dup_score );
+        }
       }
       my $leaves = $node->get_all_sorted_leaves();
       my %species;
@@ -667,7 +651,7 @@ sub fetch_gene_from_core_db {
     my $dnafrag_id = add_dnafrag($dbh,$core_dbs->{$sp}{'genome_db_id'},$ref->{'cs_name'},$ref->{'sr_name'},$ref->{'sr_length'});
     #print $dnafrag_id,"\t",$ref->{'tsl_stable_id'},"\n";
     my $display_label = 'NULL'; #TODO: look for a display label (display_xref...)
-    my $gene_member_id = add_gene_member($dbh,$core_dbs,$sp,$core_dbs->{$sp}{'genome_db_id'},$ref->{'g_stable_id'},'ENSEMBLGENE',$core_dbs->{$sp}{'taxon_id'},$ref->{'g_description'},$dnafrag_id,$ref->{'g_sr_start'},$ref->{'g_sr_end'},$ref->{'g_sr_strand'},$ref->{'gene_id'},$ref->{'g_xref_id'},$display_label);
+    my $gene_member_id = add_gene_member($dbh,$core_dbs,$sp,$core_dbs->{$sp}{'genome_db_id'},$ref->{'g_stable_id'},'default',$core_dbs->{$sp}{'taxon_id'},$ref->{'g_description'},$dnafrag_id,$ref->{'g_sr_start'},$ref->{'g_sr_end'},$ref->{'g_sr_strand'},$ref->{'gene_id'},$ref->{'g_xref_id'},$display_label);
     #print $gene_member_id,"\t",$ref->{'g_stable_id'},"\n";
     my $sequence_id = add_sequence($dbh,$seqstr,$length);
     #print $sequence_id," = seq_id\n";
@@ -756,7 +740,7 @@ sub add_gene_member {
   $display_label = $dbh->quote($display_label) unless $display_label eq 'NULL';
   my $gene_trees = 1;
   # TODO: Update gene_trees, gene_gain_loss_trees, orthologues, paralogues when adding trees
-  $dbh->do("INSERT INTO gene_member (stable_id,source_name,taxon_id,genome_db_id,description,dnafrag_id,dnafrag_start,dnafrag_end,dnafrag_strand,display_label,gene_trees)"
+  $dbh->do("INSERT INTO gene_member (stable_id,source_name,taxon_id,genome_db_id,description,dnafrag_id,dnafrag_start,dnafrag_end,dnafrag_strand,display_label)"
           ." VALUES (".$dbh->quote($stable_id)
           .",".$dbh->quote($source_name)
           .",".$taxon_id
@@ -767,12 +751,19 @@ sub add_gene_member {
           .",".$dnafrag_end
           .",".$dnafrag_strand
           .",".$display_label
-          .",".$gene_trees
           .")");
   my $gene_member_id;
   $sth->execute();
   if ($sth->rows() > 0){
     $gene_member_id = $sth->fetchrow_arrayref()->[0];
+
+    $dbh->do("INSERT INTO gene_member_hom_stats (gene_member_id,collection,gene_trees,gene_gain_loss_trees)"
+            ." VALUES (".$gene_member_id
+            .",".$dbh->quote($source_name)
+            .",1"
+            .",1"
+            .")");
+
     # TODO: fetch an xref and fill in display_xref if the gene has a display_xref_id
 
     my $cdbh = $core_dbs->{$sp}{'db_handle'};
@@ -964,11 +955,11 @@ sub add_to_species_set {
     $dbh->do("INSERT INTO species_set_tag (species_set_id,tag,value) "
         ."VALUES (  ".1
               .",'name'"
-              .",'lepidoptera'"
+              .",'default'"
               .")");
     $dbh->do("INSERT INTO species_set_header (species_set_id,name,size) "
         ."VALUES (  ".1
-              .",'lepidoptera'"
+              .",'default'"
               .",0"
               .")");
 
@@ -1066,8 +1057,8 @@ sub setup_compara_db {
   while (<SPECIES_NEWICK>) {
     chomp; $species_newick .= $_;
   }
-  $dbh->do("INSERT INTO species_tree_root (root_id,method_link_species_set_id,label,species_tree)"
-      ."VALUES (1000,1,".$dbh->quote($params->{'SPECIES_SET'}{'TREE_LABEL'}).",".$dbh->quote($species_newick).")");
+  $dbh->do("INSERT INTO species_tree_root (root_id,method_link_species_set_id,label)"
+      ."VALUES (1000,1,".$dbh->quote($params->{'SPECIES_SET'}{'TREE_LABEL'}).")");
   return $dbh;
 }
 

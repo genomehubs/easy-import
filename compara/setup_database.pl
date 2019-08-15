@@ -29,6 +29,8 @@ my %sections = (
             },
   'DATABASE_TEMPLATE' =>	{ 	'NAME' => 1,
               'URL' => 1
+            },
+  'SPECIES_SET' =>	{ 	'TREE_FILE' => 1
             }
   );
 ## check that all required parameters have been defined in the config file
@@ -36,7 +38,7 @@ die "ERROR: you must specify at least one ini file\n",usage(),"\n" unless $ARGV[
 my %params;
 my $params = \%params;
 while (my $ini_file = shift @ARGV){
-	load_ini($params,$ini_file,\%sections);
+        load_ini($params,$ini_file,\%sections,scalar(@ARGV));
 }
 
 my $lib = $params->{'ENSEMBL'}{'LOCAL'}.'/ensembl/modules';
