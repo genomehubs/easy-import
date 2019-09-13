@@ -152,7 +152,6 @@ while (<OG>) {
   my $orthogroup_id = shift @tokens;
   next if scalar @tokens < 2;
   $orthogroup_id =~ s/:$//;
-  next unless $orthogroup_id eq 'OG0001234';
   print $orthogroup_id,"\n";
   my $genetree_id = $orthogroup_id;
   my $prefix = $params{ORTHOGROUP}->{PREFIX} || 'OG';
@@ -247,8 +246,6 @@ while (<OG>) {
     close GTIN;
     $gt_nwk =~ s/[A-Z]{6}_([A-Z]{6}_)/$1/g;
     my $parsed = parse_tree($gt_nwk);
-    use Data::Dumper;
-    print Dumper $parsed;
     my $gt_nodes = gt_nodes_by_taxa($parsed,$st_nodes,$st_parsed);
         foreach my $gtnode (keys %{$gt_nodes}){
           my $dup = 'N';
