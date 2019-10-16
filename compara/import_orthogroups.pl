@@ -58,8 +58,6 @@ load Bio::EnsEMBL::Compara::SpeciesTreeNode;
 load Bio::EnsEMBL::Compara::SpeciesTree;
 load Bio::EnsEMBL::Compara::DBSQL::NCBITaxonAdaptor;
 
-my $dbh = compara_db_connect($params);
-
 our $prefix = $params->{'ORTHOGROUP'}{'PREFIX'};
 # this is the current version prefix, trim the version digits at the end
 $prefix =~ s/\d*$//;
@@ -71,14 +69,18 @@ foreach my $key (keys %{$params->{'TAXA'}}){
 chop $taxlist;
 $params->{'ORTHOGROUP'}{'TAXA'} = $taxlist;
 
+my $dbh = compara_db_connect($params);
 my ($st_nodes,$core_dbs) = fetch_species_tree_nodes($params,$dbh);
+$dbh->disconnect();
 
 find({wanted => sub {
   my $file = $File::Find::name;
   if (!-d $file){
     if ($file =~ m/$prefix\w+$/){
+      $dbh = compara_db_connect($params);
       warn "importing $file\n";
       load_sequences($dbh,$params,$st_nodes,$core_dbs,$file);
+      $dbh->disconnect();
     }
   }
 },
