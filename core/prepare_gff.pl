@@ -38,6 +38,11 @@ foreach my $subsection (sort keys %{$params->{'FILES'}}){
 	($infiles{$subsection}{'name'},$infiles{$subsection}{'type'}) = fetch_file($params->{'FILES'}{$subsection});
 }
 
+## preprocess the download/obtain files using the commands in the ini file
+foreach my $subsection (sort keys %{$params->{'PREPROCESSING'}}){
+    preprocess_files($params->{'PREPROCESSING'}{$subsection});
+}
+
 ## get name/description information from fasta files if defined in the config
 ## use pattern matching and substitution to allow for non-exact correspondence between names in different files
 ## preferentially select descriptions from sources with lower indices

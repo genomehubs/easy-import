@@ -2429,6 +2429,12 @@ sub fetch_file {
 	return ($filename,$type);
 }
 
+sub preprocess_files {
+    my ($command);
+    $command = shift;
+    system "$command";
+}
+
 sub template_db_connect {
 	my $params = shift;
 	my $dsn = "DBI:mysql:host=$params->{'DATABASE_TEMPLATE'}{'HOST'};port=$params->{'DATABASE_TEMPLATE'}{'PORT'}";
