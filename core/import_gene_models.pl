@@ -43,11 +43,6 @@ foreach my $subsection (sort keys %{$params->{'FILES'}}){
 	($infiles{$subsection}{'name'},$infiles{$subsection}{'type'}) = fetch_file($params->{'FILES'}{$subsection});
 }
 
-## preprocess the download/obtain files using the commands in the ini file
-foreach my $subsection (sort keys %{$params->{'PREPROCESSING'}}){
-    preprocess_files($params->{'PREPROCESSING'}{$subsection});
-}
-
 ## truncate database tables if option is specified
 if ($params->{'MODIFY'}{'TRUNCATE_GENE_TABLES'}){
 	truncate_gene_tables($dbh);
